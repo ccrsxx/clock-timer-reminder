@@ -1,0 +1,24 @@
+body {
+  font: normal 1.6rem/1.4 var(--main-font);
+  background: var(--background-base);
+  margin: 0;
+}
+
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.clock-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 80rem;
+  height: 70rem;
+  background: transparent;
+  background-color: white;
+  border-radius: 1rem;
+  color: lightcoral;
+}
