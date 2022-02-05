@@ -3,6 +3,7 @@ import { FontAwesomeIcon, faArrowUp, faArrowDown } from '../common';
 interface LengthControlProps {
   sessionLength: number;
   breakLength: number;
+  handleLengthControl: (type: string) => void;
 }
 
 export const LengthControl = (props: LengthControlProps) => (
@@ -16,6 +17,7 @@ export const LengthControl = (props: LengthControlProps) => (
           id='session-increment'
           className='icon'
           icon={faArrowUp}
+          onClick={() => props.handleLengthControl('session-increment')}
         />
         <p id='session-length' className='length-value'>
           {props.sessionLength}
@@ -24,6 +26,7 @@ export const LengthControl = (props: LengthControlProps) => (
           id='session-decrement'
           className='icon'
           icon={faArrowDown}
+          onClick={() => props.handleLengthControl('session-decrement')}
         />
       </div>
     </div>
@@ -36,6 +39,7 @@ export const LengthControl = (props: LengthControlProps) => (
           id='break-increment'
           className='icon'
           icon={faArrowUp}
+          onClick={() => props.handleLengthControl('break-increment')}
         />
         <p id='break-length' className='length-value'>
           {props.breakLength}
@@ -44,6 +48,7 @@ export const LengthControl = (props: LengthControlProps) => (
           id='break-decrement'
           className='icon'
           icon={faArrowDown}
+          onClick={() => props.handleLengthControl('break-decrement')}
         />
       </div>
     </div>
