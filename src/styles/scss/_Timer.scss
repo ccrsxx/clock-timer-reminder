@@ -1,0 +1,17 @@
+.timer-container {
+  padding: 1rem 3rem;
+  border: 1rem solid lightgray;
+  border-radius: 5rem;
+
+  .timer-label {
+    font-weight: medium;
+    font-size: 3rem;
+    margin: 1rem;
+    margin-bottom: -1rem;
+  }
+
+  .timer-left {
+    font-size: 7rem;
+    margin: 1rem;
+  }
+}

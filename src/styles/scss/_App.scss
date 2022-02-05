@@ -1,5 +1,5 @@
 body {
-  font: normal 1.6rem/1.4 var(--main-font);
+  font: normal 1.6rem var(--main-font);
   background: var(--background-base);
   margin: 0;
 }
@@ -8,17 +8,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   min-height: 100vh;
+  color: lightcoral;
 }
 
 .clock-container {
   display: flex;
-  align-items: center;
   flex-direction: column;
-  width: 80rem;
-  height: 70rem;
+  justify-content: space-around;
+  align-items: center;
+  width: 70rem;
+  height: 60rem;
+  margin: 2rem;
+  padding: 1rem;
   background: transparent;
   background-color: white;
   border-radius: 1rem;
-  color: lightcoral;
 }

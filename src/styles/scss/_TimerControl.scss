@@ -1,0 +1,14 @@
+.control-container {
+  margin: 2rem;
+  font-size: 2rem;
+
+  .icon {
+    cursor: pointer;
+    font-size: 3rem;
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

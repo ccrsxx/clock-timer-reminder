@@ -1,0 +1,44 @@
+.input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+
+  .length-control-container {
+    width: 25rem;
+    background-color: lightgray;
+    padding: 1rem;
+    border-radius: 1rem;
+
+    &:last-child {
+      margin-left: 2rem;
+    }
+
+    legend {
+      width: 100%;
+      float: left;
+    }
+
+    .label {
+      font-size: 2.5rem;
+      margin: 1rem;
+    }
+
+    .length-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+
+      .icon {
+        cursor: pointer;
+        font-size: 3rem;
+      }
+
+      .length-value {
+        font-size: 3rem;
+        margin: 0 1rem;
+      }
+    }
+  }
+}
