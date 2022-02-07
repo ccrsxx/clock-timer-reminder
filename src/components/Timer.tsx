@@ -8,7 +8,7 @@ export const Timer = (props: TimerProps) => (
     <figcaption id='timer-label' className='timer-label'>
       {props.currentTimer[0].toLocaleUpperCase() + props.currentTimer.slice(1)}
     </figcaption>
-    <p id='timer-left' className='timer-left'>
+    <p id='time-left' className='time-left'>
       {`${props.time.m}:${props.time.s}`}
     </p>
   </figure>

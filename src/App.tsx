@@ -11,13 +11,16 @@ interface AppStates {
 }
 
 class App extends Component<{}, AppStates> {
+  audio = new Audio(
+    'https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'
+  );
   timer = 0;
 
   constructor(props: {}) {
     super(props);
     this.state = {
-      sessionLength: 25,
-      breakLength: 5,
+      sessionLength: 0.1,
+      breakLength: 0.1,
       isRunning: false,
       currentTimer: 'session',
       timeLeft: { m: 0, s: 0 },
@@ -27,6 +30,12 @@ class App extends Component<{}, AppStates> {
     this.startTimer = this.startTimer.bind(this);
     this.countDown = this.countDown.bind(this);
     this.clear = this.clear.bind(this);
+  }
+
+  componentDidUpdate() {
+    if (this.state.isRunning && this.state.seconds === 0) {
+      this.audio.play();
+    }
   }
 
   componentDidMount() {
