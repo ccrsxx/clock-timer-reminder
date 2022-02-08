@@ -1,40 +1,51 @@
 import { Component } from 'react';
-import { LengthControl, Header, Timer, TimerControl } from './components';
+import {
+  LengthControl,
+  Header,
+  Timer,
+  TimerControl,
+  Footer
+} from './components';
 
 interface AppStates {
   sessionLength: number;
   breakLength: number;
   isRunning: boolean;
+  isRinging: boolean;
+  warning: boolean;
   currentTimer: 'session' | 'break';
   timeLeft: { m: number | string; s: number | string };
   seconds: number;
 }
 
 class App extends Component<{}, AppStates> {
-  audio = new Audio(
-    'https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'
-  );
   timer = 0;
+  audio: null | HTMLAudioElement = null;
 
   constructor(props: {}) {
     super(props);
     this.state = {
-      sessionLength: 0.1,
-      breakLength: 0.1,
+      sessionLength: 25,
+      breakLength: 5,
       isRunning: false,
+      isRinging: false,
+      warning: false,
       currentTimer: 'session',
       timeLeft: { m: 0, s: 0 },
       seconds: 0
     };
     this.handleLengthControl = this.handleLengthControl.bind(this);
-    this.startTimer = this.startTimer.bind(this);
+    this.toggleTimer = this.toggleTimer.bind(this);
     this.countDown = this.countDown.bind(this);
     this.clear = this.clear.bind(this);
   }
 
   componentDidUpdate() {
     if (this.state.isRunning && this.state.seconds === 0) {
-      this.audio.play();
+      this.audio!.play();
+    } else if (!this.state.isRunning) {
+      this.audio!.pause();
+      this.audio!.currentTime = 0;
     }
   }
 
@@ -68,9 +79,6 @@ class App extends Component<{}, AppStates> {
   }
 
   countDown() {
-    console.clear();
-    console.log('starts', this.state.seconds, this.state.timeLeft);
-
     const seconds = this.state.seconds - 1;
     const timeLeft = this.secondsToTime(seconds);
 
@@ -80,6 +88,10 @@ class App extends Component<{}, AppStates> {
     });
 
     if (seconds === -1) {
+      setTimeout(() => {
+        this.setState({ isRinging: false });
+      }, 3000);
+
       const currentTimer =
         this.state.currentTimer === 'session' ? 'break' : 'session';
 
@@ -95,10 +107,19 @@ class App extends Component<{}, AppStates> {
         timeLeft,
         seconds
       });
+    } else if (seconds === 10) {
+      this.setState({
+        warning: true
+      });
+    } else if (seconds === 0) {
+      this.setState({
+        isRinging: true,
+        warning: false
+      });
     }
   }
 
-  startTimer() {
+  toggleTimer() {
     if (!this.state.isRunning) {
       this.timer = window.setInterval(this.countDown, 1000);
       this.setState({
@@ -107,7 +128,8 @@ class App extends Component<{}, AppStates> {
     } else if (this.state.isRunning) {
       clearInterval(this.timer);
       this.setState({
-        isRunning: false
+        isRunning: false,
+        isRinging: false
       });
     }
   }
@@ -154,11 +176,15 @@ class App extends Component<{}, AppStates> {
 
   clear() {
     clearInterval(this.timer);
+    this.audio!.pause();
+    this.audio!.currentTime = 0;
 
     this.setState({
       sessionLength: 25,
       breakLength: 5,
       isRunning: false,
+      isRinging: false,
+      warning: false,
       currentTimer: 'session',
       timeLeft: { m: 25, s: '00' },
       seconds: 25 * 60
@@ -166,27 +192,35 @@ class App extends Component<{}, AppStates> {
   }
 
   render() {
-    console.log(this.state);
-
     return (
       <div className='App'>
         <main className='clock-container'>
           <Header />
           <LengthControl
+            isRunning={this.state.isRunning}
             sessionLength={this.state.sessionLength}
             breakLength={this.state.breakLength}
             handleLengthControl={this.handleLengthControl}
           />
           <Timer
+            isRunning={this.state.isRunning}
+            isRinging={this.state.isRinging}
+            warning={this.state.warning}
             currentTimer={this.state.currentTimer}
-            time={this.state.timeLeft}
+            timeLeft={this.state.timeLeft}
           />
           <TimerControl
-            startTimer={this.startTimer}
+            toggleTimer={this.toggleTimer}
             clear={this.clear}
             isRunning={this.state.isRunning}
           />
+          <audio
+            id='beep'
+            src='https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'
+            ref={(audio) => (this.audio = audio)}
+          />
         </main>
+        <Footer />
       </div>
     );
   }

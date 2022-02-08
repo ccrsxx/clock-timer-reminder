@@ -5,12 +5,23 @@ body {
 }
 
 .App {
+  animation: fadeIn 1s ease-in-out;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   min-height: 100vh;
   color: lightcoral;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }
 
 .clock-container {
@@ -25,4 +36,15 @@ body {
   background: transparent;
   background-color: white;
   border-radius: 1rem;
+  transition: 300ms ease-out;
+
+  @media screen and (max-width: 560px) {
+    width: 95vw;
+    height: auto;
+    margin: 2rem;
+  }
+}
+
+button {
+  all: unset;
 }

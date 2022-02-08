@@ -5,10 +5,34 @@
   .icon {
     cursor: pointer;
     font-size: 3rem;
-    margin-right: 1rem;
+    transition: 300ms;
 
-    &:last-child {
-      margin-right: 0;
+    &:hover {
+      transform: scale(1.1);
+      filter: brightness(1.1);
+    }
+
+    &:active {
+      transform: scale(1.3);
+      filter: brightness(1.5);
+    }
+
+    &:first-child {
+      margin-right: 1.5rem;
+      font-size: 3.2rem;
+    }
+  }
+
+  .clicked {
+    animation: rotate 300ms;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg) scale(1.1);
     }
   }
 }

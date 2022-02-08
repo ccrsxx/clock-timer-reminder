@@ -1,0 +1,26 @@
+.author-container {
+  color: lightskyblue;
+  font-size: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .subtitle {
+    margin: 0.5rem 0;
+  }
+
+  .author-name {
+    text-decoration: none;
+    color: lightpink;
+    border-bottom: 2px solid transparent;
+    transition: 300ms;
+
+    &:hover {
+      transform: scale(1.1);
+      color: bisque;
+      border-color: beige;
+    }
+  }
+}

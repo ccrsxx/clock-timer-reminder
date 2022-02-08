@@ -2,6 +2,7 @@
   padding: 1rem 3rem;
   border: 1rem solid lightgray;
   border-radius: 5rem;
+  transition: 300ms ease-out;
 
   .timer-label {
     font-weight: medium;
@@ -13,5 +14,26 @@
   .time-left {
     font-size: 7rem;
     margin: 1rem;
+  }
+}
+
+.warning {
+  animation: warning 500ms infinite;
+}
+
+@keyframes warning {
+  50% {
+    color: red;
+  }
+}
+
+.ringing {
+  animation: ringing 500ms infinite;
+}
+
+@keyframes ringing {
+  50% {
+    color: lightskyblue;
+    opacity: 0.75;
   }
 }
