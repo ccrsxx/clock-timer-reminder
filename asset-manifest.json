@@ -1,13 +1,14 @@
 {
   "files": {
-    "main.css": "/clock-timer-reminder/static/css/main.b43a8606.css",
-    "main.js": "/clock-timer-reminder/static/js/main.7f4a31ac.js",
+    "main.css": "/clock-timer-reminder/static/css/main.2d1c2a43.css",
+    "main.js": "/clock-timer-reminder/static/js/main.81c78232.js",
+    "static/media/beep.wav": "/clock-timer-reminder/static/media/beep.372995a9b53513b6fd79.wav",
     "index.html": "/clock-timer-reminder/index.html",
-    "main.b43a8606.css.map": "/clock-timer-reminder/static/css/main.b43a8606.css.map",
-    "main.7f4a31ac.js.map": "/clock-timer-reminder/static/js/main.7f4a31ac.js.map"
+    "main.2d1c2a43.css.map": "/clock-timer-reminder/static/css/main.2d1c2a43.css.map",
+    "main.81c78232.js.map": "/clock-timer-reminder/static/js/main.81c78232.js.map"
   },
   "entrypoints": [
-    "static/css/main.b43a8606.css",
-    "static/js/main.7f4a31ac.js"
+    "static/css/main.2d1c2a43.css",
+    "static/js/main.81c78232.js"
   ]
 }
