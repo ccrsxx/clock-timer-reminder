@@ -10,13 +10,11 @@ export const Timer = (props: TimerProps) => (
   <figure
     style={props.isRunning ? { borderColor: 'lightgreen' } : {}}
     className={`timer-container ${
-      !props.isRunning
-        ? ''
-        : props.warning
-        ? 'warning'
-        : props.isRinging
-        ? 'ringing'
-        : undefined
+      props.isRunning && [props.warning, props.isRinging].some((i) => i)
+        ? props.warning
+          ? 'warning'
+          : 'ringing'
+        : ''
     }`}
   >
     <figcaption id='timer-label' className='timer-label'>

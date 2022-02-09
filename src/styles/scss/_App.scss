@@ -42,6 +42,10 @@ body {
     width: 90vw;
     height: auto;
   }
+
+  @media screen and (max-width: 280px) {
+    width: 95vw;
+  }
 }
 
 button {

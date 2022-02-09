@@ -6,6 +6,7 @@ import {
   TimerControl,
   Footer
 } from './components';
+import beep from './assets/beep.wav';
 
 interface AppStates {
   sessionLength: number;
@@ -20,7 +21,7 @@ interface AppStates {
 
 class App extends Component<{}, AppStates> {
   timer = 0;
-  audio: null | HTMLAudioElement = null;
+  audio = new Audio(beep);
 
   constructor(props: {}) {
     super(props);
@@ -42,10 +43,10 @@ class App extends Component<{}, AppStates> {
 
   componentDidUpdate() {
     if (this.state.isRunning && this.state.seconds === 0) {
-      this.audio!.play();
+      this.audio.play();
     } else if (!this.state.isRunning) {
-      this.audio!.pause();
-      this.audio!.currentTime = 0;
+      this.audio.pause();
+      this.audio.currentTime = 0;
     }
   }
 
@@ -176,8 +177,8 @@ class App extends Component<{}, AppStates> {
 
   clear() {
     clearInterval(this.timer);
-    this.audio!.pause();
-    this.audio!.currentTime = 0;
+    this.audio.pause();
+    this.audio.currentTime = 0;
 
     this.setState({
       sessionLength: 25,
@@ -210,14 +211,9 @@ class App extends Component<{}, AppStates> {
             timeLeft={this.state.timeLeft}
           />
           <TimerControl
+            isRunning={this.state.isRunning}
             toggleTimer={this.toggleTimer}
             clear={this.clear}
-            isRunning={this.state.isRunning}
-          />
-          <audio
-            id='beep'
-            src='https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'
-            ref={(audio) => (this.audio = audio)}
           />
         </main>
         <Footer />

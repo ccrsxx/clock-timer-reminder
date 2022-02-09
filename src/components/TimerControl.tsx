@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { FontAwesomeIcon, faPlay, faPause, faRedo } from '../common';
 
 interface TimerProps {
+  isRunning: boolean;
   toggleTimer: () => void;
   clear: () => void;
-  isRunning: boolean;
 }
 
 export const TimerControl = (props: TimerProps) => {
