@@ -88,7 +88,16 @@ class App extends Component<{}, AppStates> {
       seconds
     });
 
-    if (seconds === -1) {
+    if (seconds === 10) {
+      this.setState({
+        warning: true
+      });
+    } else if (seconds === 0) {
+      this.setState({
+        isRinging: true,
+        warning: false
+      });
+    } else if (seconds === -1) {
       setTimeout(() => {
         this.setState({ isRinging: false });
       }, 3000);
@@ -107,15 +116,6 @@ class App extends Component<{}, AppStates> {
         currentTimer,
         timeLeft,
         seconds
-      });
-    } else if (seconds === 10) {
-      this.setState({
-        warning: true
-      });
-    } else if (seconds === 0) {
-      this.setState({
-        isRinging: true,
-        warning: false
       });
     }
   }
@@ -163,7 +163,7 @@ class App extends Component<{}, AppStates> {
           ? breakLength * 60
           : null;
 
-      // prevent an input that is more than 60 minutes
+      // prevent updating the timeleft when it's not the current timer
       if (seconds) {
         const timeLeft = this.secondsToTime(seconds);
 
