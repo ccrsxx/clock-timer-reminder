@@ -19,21 +19,21 @@
 
 .warning {
   animation: warning 500ms infinite;
-}
 
-@keyframes warning {
-  50% {
-    color: red;
+  @keyframes warning {
+    50% {
+      color: red;
+    }
   }
 }
 
 .ringing {
   animation: ringing 500ms infinite;
-}
 
-@keyframes ringing {
-  50% {
-    color: lightskyblue;
-    opacity: 0.75;
+  @keyframes ringing {
+    50% {
+      color: lightskyblue;
+      opacity: 0.75;
+    }
   }
 }

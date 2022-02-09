@@ -1,9 +1,9 @@
-@import './scss/root';
+@use './scss/root';
 
 // components
-@import './scss/App';
-@import './scss/Header';
-@import './scss/LengthControl';
-@import './scss/Timer';
-@import './scss/TimerControl';
-@import './scss/Footer';
+@use './scss/App';
+@use './scss/Header';
+@use './scss/LengthControl';
+@use './scss/Timer';
+@use './scss/TimerControl';
+@use './scss/Footer';

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import {
-  LengthControl,
   Header,
+  LengthControl,
   Timer,
   TimerControl,
   Footer
