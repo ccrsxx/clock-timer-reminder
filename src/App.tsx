@@ -23,15 +23,20 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState<timeLeftType>({ m: '25', s: '00' });
   const [seconds, setSeconds] = useState(1500);
 
-  const ref = useRef({ intervalId: 0, seconds: 0 });
+  const ref = useRef({ intervalId: 0, currentTimer: '', seconds: 0 });
 
   // reset everything when unmounting
   useEffect(() => () => reset(), []);
 
-  // get the newest seconds value
+  // get the newest seconds state value
   useEffect(() => {
     ref.current.seconds = seconds;
   }, [seconds]);
+
+  // cycle between session and break
+  useEffect(() => {
+    ref.current.currentTimer = currentTimer;
+  }, [currentTimer]);
 
   const secondsToTime = (secs: number) => {
     let [minutes, seconds]: number[] | string[] = [
@@ -49,7 +54,7 @@ export default function App() {
   };
 
   const countDown = () => {
-    const seconds = ref.current.seconds - 1;
+    const seconds = --ref.current.seconds;
 
     setTimeLeft(secondsToTime(seconds));
     setSeconds(seconds);
@@ -64,11 +69,13 @@ export default function App() {
       setTimeout(() => {
         setIsRinging(false);
       }, 3000);
-      const timerName = currentTimer === 'session' ? 'break' : 'session';
+
+      const currentTimer =
+        ref.current.currentTimer === 'session' ? 'break' : 'session';
       const seconds =
-        timerName === 'session' ? sessionLength * 60 : breakLength * 60;
+        currentTimer === 'session' ? sessionLength * 60 : breakLength * 60;
       const timeLeft = secondsToTime(seconds);
-      setCurrentTimer(timerName);
+      setCurrentTimer(currentTimer);
       setTimeLeft(timeLeft);
       setSeconds(seconds);
     }
