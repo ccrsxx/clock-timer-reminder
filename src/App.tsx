@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Header,
   LengthControl,
@@ -8,63 +8,32 @@ import {
 } from './components';
 import beep from './assets/beep.wav';
 
-interface AppStates {
-  sessionLength: number;
-  breakLength: number;
-  isRunning: boolean;
-  isRinging: boolean;
-  warning: boolean;
-  currentTimer: 'session' | 'break';
-  timeLeft: { m: number | string; s: number | string };
-  seconds: number;
-}
+type currentTimerType = 'session' | 'break';
+type timeLeftType = { m: number | string; s: number | string };
 
-class App extends Component<{}, AppStates> {
-  timer = 0;
-  audio = new Audio(beep);
+const audio = new Audio(beep);
 
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      sessionLength: 25,
-      breakLength: 5,
-      isRunning: false,
-      isRinging: false,
-      warning: false,
-      currentTimer: 'session',
-      timeLeft: { m: 0, s: 0 },
-      seconds: 0
-    };
-    this.handleLengthControl = this.handleLengthControl.bind(this);
-    this.toggleTimer = this.toggleTimer.bind(this);
-    this.countDown = this.countDown.bind(this);
-    this.clear = this.clear.bind(this);
-  }
+export default function App() {
+  const [sessionLength, setSessionLength] = useState(25);
+  const [breakLength, setBreakLength] = useState(5);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isRinging, setIsRinging] = useState(false);
+  const [warning, setWarning] = useState(false);
+  const [currentTimer, setCurrentTimer] = useState<currentTimerType>('session');
+  const [timeLeft, setTimeLeft] = useState<timeLeftType>({ m: '25', s: '00' });
+  const [seconds, setSeconds] = useState(1500);
 
-  componentDidUpdate() {
-    if (this.state.isRunning && this.state.seconds === 0) {
-      this.audio.play();
-    } else if (!this.state.isRunning) {
-      this.audio.pause();
-      this.audio.currentTime = 0;
-    }
-  }
+  const ref = useRef({ intervalId: 0, seconds: 0 });
 
-  componentDidMount() {
-    const seconds = this.state.sessionLength * 60;
-    const timeLeft = this.secondsToTime(seconds);
+  // reset everything when unmounting
+  useEffect(() => () => reset(), []);
 
-    this.setState({
-      timeLeft,
-      seconds
-    });
-  }
+  // get the newest seconds value
+  useEffect(() => {
+    ref.current.seconds = seconds;
+  }, [seconds]);
 
-  componentWillUnmount() {
-    clearInterval(this.timer);
-  }
-
-  secondsToTime(secs: number) {
+  const secondsToTime = (secs: number) => {
     let [minutes, seconds]: number[] | string[] = [
       Math.floor(secs / 60),
       secs % 60
@@ -77,149 +46,120 @@ class App extends Component<{}, AppStates> {
       m: minutes,
       s: seconds
     };
-  }
+  };
 
-  countDown() {
-    const seconds = this.state.seconds - 1;
-    const timeLeft = this.secondsToTime(seconds);
+  const countDown = () => {
+    const seconds = ref.current.seconds - 1;
 
-    this.setState({
-      timeLeft,
-      seconds
-    });
+    setTimeLeft(secondsToTime(seconds));
+    setSeconds(seconds);
 
     if (seconds === 10) {
-      this.setState({
-        warning: true
-      });
+      setWarning(true);
     } else if (seconds === 0) {
-      this.setState({
-        isRinging: true,
-        warning: false
-      });
+      audio.play();
+      setIsRinging(true);
+      setWarning(false);
     } else if (seconds === -1) {
       setTimeout(() => {
-        this.setState({ isRinging: false });
+        setIsRinging(false);
       }, 3000);
-
-      const currentTimer =
-        this.state.currentTimer === 'session' ? 'break' : 'session';
-
+      const timerName = currentTimer === 'session' ? 'break' : 'session';
       const seconds =
-        currentTimer === 'session'
-          ? this.state.sessionLength * 60
-          : this.state.breakLength * 60;
-
-      const timeLeft = this.secondsToTime(seconds);
-
-      this.setState({
-        currentTimer,
-        timeLeft,
-        seconds
-      });
+        timerName === 'session' ? sessionLength * 60 : breakLength * 60;
+      const timeLeft = secondsToTime(seconds);
+      setCurrentTimer(timerName);
+      setTimeLeft(timeLeft);
+      setSeconds(seconds);
     }
-  }
+  };
 
-  toggleTimer() {
-    if (!this.state.isRunning) {
-      this.timer = window.setInterval(this.countDown, 1000);
-      this.setState({
-        isRunning: true
-      });
-    } else if (this.state.isRunning) {
-      clearInterval(this.timer);
-      this.setState({
-        isRunning: false,
-        isRinging: false
-      });
+  const toggleTimer = () => {
+    if (!isRunning) {
+      ref.current.intervalId = window.setInterval(countDown, 1000);
+      setIsRunning(true);
+    } else if (isRunning) {
+      audio.pause();
+      audio.currentTime = 0;
+      clearInterval(ref.current.intervalId);
+      setIsRunning(false);
+      setIsRinging(false);
     }
-  }
+  };
 
-  handleLengthControl(type: string) {
-    if (!this.state.isRunning) {
+  const handleLengthControl = (type: string) => {
+    if (!isRunning) {
       let [dataType, action]: number[] | string[] = type.split('-');
-      let { sessionLength, breakLength } = this.state;
+      let [currentSession, currentBreak] = [sessionLength, breakLength];
 
       action = action === 'increment' ? 1 : -1;
 
-      [sessionLength, breakLength] = [sessionLength, breakLength].map((i) =>
+      [currentSession, currentBreak] = [currentSession, currentBreak].map((i) =>
         i + +action >= 60 ? 60 : !(i + +action) ? 1 : i + +action
       );
 
       if (dataType === 'session') {
-        this.setState({
-          sessionLength
-        });
+        setSessionLength(currentSession);
       } else if (dataType === 'break') {
-        this.setState({
-          breakLength
-        });
+        setBreakLength(currentBreak);
       }
 
-      const seconds =
-        this.state.currentTimer === 'session' && dataType === 'session'
-          ? sessionLength * 60
-          : this.state.currentTimer === 'break' && dataType === 'break'
-          ? breakLength * 60
+      const currentSeconds =
+        currentTimer === 'session' && dataType === 'session'
+          ? currentSession * 60
+          : currentTimer === 'break' && dataType === 'break'
+          ? currentBreak * 60
           : null;
 
-      // prevent updating the timeleft when it's not the current timer
-      if (seconds) {
-        const timeLeft = this.secondsToTime(seconds);
-
-        this.setState({
-          seconds,
-          timeLeft
-        });
+      if (currentSeconds) {
+        const timeLeft = secondsToTime(currentSeconds);
+        setTimeLeft(timeLeft);
+        setSeconds(currentSeconds);
       }
     }
-  }
+  };
 
-  clear() {
-    clearInterval(this.timer);
-    this.audio.pause();
-    this.audio.currentTime = 0;
+  const reset = () => {
+    // reset side effect and audio state
+    clearInterval(ref.current.intervalId);
+    audio.pause();
+    audio.currentTime = 0;
 
-    this.setState({
-      sessionLength: 25,
-      breakLength: 5,
-      isRunning: false,
-      isRinging: false,
-      warning: false,
-      currentTimer: 'session',
-      timeLeft: { m: 25, s: '00' },
-      seconds: 25 * 60
-    });
-  }
+    // reset all states
+    setSessionLength(25);
+    setBreakLength(5);
+    setIsRunning(false);
+    setIsRinging(false);
+    setWarning(false);
+    setCurrentTimer('session');
+    setTimeLeft({ m: '25', s: '00' });
+    setSeconds(1500);
+  };
 
-  render() {
-    return (
-      <div className='App'>
-        <main className='clock-container'>
-          <Header />
-          <LengthControl
-            isRunning={this.state.isRunning}
-            sessionLength={this.state.sessionLength}
-            breakLength={this.state.breakLength}
-            handleLengthControl={this.handleLengthControl}
-          />
-          <Timer
-            isRunning={this.state.isRunning}
-            isRinging={this.state.isRinging}
-            warning={this.state.warning}
-            currentTimer={this.state.currentTimer}
-            timeLeft={this.state.timeLeft}
-          />
-          <TimerControl
-            isRunning={this.state.isRunning}
-            toggleTimer={this.toggleTimer}
-            clear={this.clear}
-          />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  return (
+    <div className='App'>
+      <main className='clock-container'>
+        <Header />
+        <LengthControl
+          isRunning={isRunning}
+          sessionLength={sessionLength}
+          breakLength={breakLength}
+          handleLengthControl={handleLengthControl}
+        />
+        <Timer
+          isRunning={isRunning}
+          isRinging={isRinging}
+          warning={warning}
+          currentTimer={currentTimer}
+          timeLeft={timeLeft}
+        />
+        <TimerControl
+          isRunning={isRunning}
+          toggleTimer={toggleTimer}
+          reset={reset}
+        />
+      </main>
+      <Footer />
+    </div>
+  );
 }
-
-export default App;

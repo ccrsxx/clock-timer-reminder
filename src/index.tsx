@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './styles/index.scss';
 
-ReactDOM.render(
+const container = document.getElementById('root') as HTMLDivElement;
+const root = ReactDOM.createRoot(container);
+
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
