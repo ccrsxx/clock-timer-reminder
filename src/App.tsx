@@ -8,8 +8,8 @@ import {
 } from './components';
 import beep from './assets/beep.wav';
 
-type currentTimerType = 'session' | 'break';
-type timeLeftType = { m: number | string; s: number | string };
+type CurrentTimerType = 'session' | 'break';
+type TimeLeftType = { mm: number | string; ss: number | string };
 
 const audio = new Audio(beep);
 
@@ -19,71 +19,68 @@ export default function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [isRinging, setIsRinging] = useState(false);
   const [warning, setWarning] = useState(false);
-  const [currentTimer, setCurrentTimer] = useState<currentTimerType>('session');
-  const [timeLeft, setTimeLeft] = useState<timeLeftType>({ m: '25', s: '00' });
-  const [seconds, setSeconds] = useState(1500);
+  const [currentSeconds, setCurrentSeconds] = useState(1500);
+  const [currentTimer, setCurrentTimer] = useState<CurrentTimerType>('session');
+  const [currentTimeLeft, setCurrentTimeLeft] = useState<TimeLeftType>({
+    mm: '25',
+    ss: '00'
+  });
 
-  const ref = useRef({ intervalId: 0, currentTimer: '', seconds: 0 });
+  // ref to get the interval id
+  const ref = useRef({ intervalId: 0 });
 
   // reset everything when unmounting
   useEffect(() => () => reset(), []);
 
-  // get the newest seconds state value
+  // control all the life cycle of the timer
   useEffect(() => {
-    ref.current.seconds = seconds;
-  }, [seconds]);
+    if (currentSeconds !== -1) {
+      setCurrentTimeLeft(secondsToTime(currentSeconds));
+    }
 
-  // cycle between session and break
-  useEffect(() => {
-    ref.current.currentTimer = currentTimer;
-  }, [currentTimer]);
-
-  const secondsToTime = (secs: number) => {
-    let [minutes, seconds]: number[] | string[] = [
-      Math.floor(secs / 60),
-      secs % 60
-    ];
-
-    // add zero if second or minute is less than 10
-    [minutes, seconds] = [minutes, seconds].map((i) => (i < 10 ? `0${i}` : i));
-
-    return {
-      m: minutes,
-      s: seconds
-    };
-  };
-
-  const countDown = () => {
-    const seconds = --ref.current.seconds;
-
-    setTimeLeft(secondsToTime(seconds));
-    setSeconds(seconds);
-
-    if (seconds === 10) {
+    if (currentSeconds === 10) {
       setWarning(true);
-    } else if (seconds === 0) {
+    } else if (currentSeconds === 0) {
       audio.play();
       setIsRinging(true);
       setWarning(false);
-    } else if (seconds === -1) {
+    } else if (currentSeconds === -1) {
       setTimeout(() => {
         setIsRinging(false);
       }, 3000);
 
-      const currentTimer =
-        ref.current.currentTimer === 'session' ? 'break' : 'session';
-      const seconds =
-        currentTimer === 'session' ? sessionLength * 60 : breakLength * 60;
-      const timeLeft = secondsToTime(seconds);
-      setCurrentTimer(currentTimer);
-      setTimeLeft(timeLeft);
-      setSeconds(seconds);
+      const nextTimer = currentTimer === 'session' ? 'break' : 'session';
+      const nextSeconds =
+        nextTimer === 'session' ? sessionLength * 60 : breakLength * 60;
+      const nextTimeLeft = secondsToTime(nextSeconds);
+
+      setCurrentTimer(nextTimer);
+      setCurrentTimeLeft(nextTimeLeft);
+      setCurrentSeconds(nextSeconds);
     }
+  }, [currentSeconds]);
+
+  const secondsToTime = (seconds: number) => {
+    let [minute, second]: number[] | string[] = [
+      Math.floor(seconds / 60),
+      seconds % 60
+    ];
+
+    // add zero if second or minute is less than 10
+    [minute, second] = [minute, second].map((i) => (i < 10 ? `0${i}` : i));
+
+    return {
+      mm: minute,
+      ss: second
+    };
   };
 
   const toggleTimer = () => {
     if (!isRunning) {
-      ref.current.intervalId = window.setInterval(countDown, 1000);
+      ref.current.intervalId = window.setInterval(
+        () => setCurrentSeconds((prevSeconds) => prevSeconds - 1),
+        1000
+      );
       setIsRunning(true);
     } else if (isRunning) {
       audio.pause();
@@ -96,6 +93,7 @@ export default function App() {
 
   const handleLengthControl = (type: string) => {
     if (!isRunning) {
+      // eslint-disable-next-line prefer-const
       let [dataType, action]: number[] | string[] = type.split('-');
       let [currentSession, currentBreak] = [sessionLength, breakLength];
 
@@ -111,17 +109,17 @@ export default function App() {
         setBreakLength(currentBreak);
       }
 
-      const currentSeconds =
+      const nextSeconds =
         currentTimer === 'session' && dataType === 'session'
           ? currentSession * 60
           : currentTimer === 'break' && dataType === 'break'
           ? currentBreak * 60
           : null;
 
-      if (currentSeconds) {
-        const timeLeft = secondsToTime(currentSeconds);
-        setTimeLeft(timeLeft);
-        setSeconds(currentSeconds);
+      if (nextSeconds) {
+        const nextTimeLeft = secondsToTime(nextSeconds);
+        setCurrentTimeLeft(nextTimeLeft);
+        setCurrentSeconds(nextSeconds);
       }
     }
   };
@@ -138,9 +136,9 @@ export default function App() {
     setIsRunning(false);
     setIsRinging(false);
     setWarning(false);
+    setCurrentSeconds(1500);
     setCurrentTimer('session');
-    setTimeLeft({ m: '25', s: '00' });
-    setSeconds(1500);
+    setCurrentTimeLeft({ mm: '25', ss: '00' });
   };
 
   return (
@@ -158,7 +156,7 @@ export default function App() {
           isRinging={isRinging}
           warning={warning}
           currentTimer={currentTimer}
-          timeLeft={timeLeft}
+          timeLeft={currentTimeLeft}
         />
         <TimerControl
           isRunning={isRunning}

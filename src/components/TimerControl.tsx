@@ -7,22 +7,22 @@ interface TimerProps {
   reset: () => void;
 }
 
-export const TimerControl = (props: TimerProps) => {
+export function TimerControl({ isRunning, toggleTimer, reset }: TimerProps) {
   const [isClicked, setClicked] = useState(false);
 
   return (
     <section className='control-container'>
-      <button id='start_stop' className='icon' onClick={props.toggleTimer}>
-        <FontAwesomeIcon icon={props.isRunning ? faPause : faPlay} />
+      <button type='button' className='icon' onClick={toggleTimer}>
+        <FontAwesomeIcon icon={isRunning ? faPause : faPlay} />
       </button>
       <button
-        id='reset'
+        type='button'
         className={`icon ${isClicked ? 'clicked' : ''}`}
         onAnimationEnd={() => setClicked(false)}
-        onClick={props.reset}
+        onClick={reset}
       >
         <FontAwesomeIcon icon={faRedo} onClick={() => setClicked(true)} />
       </button>
     </section>
   );
-};
+}

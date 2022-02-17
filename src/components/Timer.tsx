@@ -3,25 +3,31 @@ interface TimerProps {
   isRinging: boolean;
   warning: boolean;
   currentTimer: 'session' | 'break';
-  timeLeft: { m: number | string; s: number | string };
+  timeLeft: { mm: number | string; ss: number | string };
 }
 
-export const Timer = (props: TimerProps) => (
-  <figure
-    style={props.isRunning ? { borderColor: 'lightgreen' } : {}}
-    className={`timer-container ${
-      props.isRunning && [props.warning, props.isRinging].some((i) => i)
-        ? props.warning
-          ? 'warning'
-          : 'ringing'
-        : ''
-    }`}
-  >
-    <figcaption id='timer-label' className='timer-label'>
-      {props.currentTimer[0].toLocaleUpperCase() + props.currentTimer.slice(1)}
-    </figcaption>
-    <p id='time-left' className='time-left'>
-      {`${props.timeLeft.m}:${props.timeLeft.s}`}
-    </p>
-  </figure>
-);
+export function Timer({
+  isRunning,
+  isRinging,
+  warning,
+  currentTimer,
+  timeLeft
+}: TimerProps) {
+  return (
+    <figure
+      style={isRunning ? { borderColor: 'lightgreen' } : {}}
+      className={`timer-container ${
+        isRunning && [warning, isRinging].some((i) => i)
+          ? warning
+            ? 'warning'
+            : 'ringing'
+          : ''
+      }`}
+    >
+      <figcaption className='timer-label'>
+        {currentTimer[0].toUpperCase() + currentTimer.slice(1)}
+      </figcaption>
+      <p className='time-left'>{`${timeLeft.mm}:${timeLeft.ss}`}</p>
+    </figure>
+  );
+}
